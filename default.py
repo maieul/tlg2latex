@@ -21,7 +21,7 @@ before_stanza_r = " \n"		# before stanza
 after_stanta_r 	= " \n"		# after stanza
 #writing
 par_break_w	= "\n\n"			# the begining of paragraph
-begin_quote_w	= "\enquote{"			# the begining of quotation
+begin_quote_w	= r"\\enquote{"			# the begining of quotation
 end_quote_w	= "}"				# the end of quotation
 paragraph_w	= r"\\marginnote{\1}"		# the paragraph number
 chapter_w	= r"\n\\textbf{\1}"		# the chapter number
