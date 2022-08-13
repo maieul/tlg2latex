@@ -24,11 +24,11 @@ def normaliser_fichier(fichier):
 			finale = finale + normalize_line(line)+'\n'
 		else:
 			finale	= finale + config.empty_line_w
-	
+
 	# correct end stanza
 	finale = finale.replace(config.between_stanza_w+"\n"+config.after_stanza_w+"\n","\n"+config.after_stanza_w+"\n")
-	
-		
+
+
 	file.close()
 	if os.path.dirname(fichier)=="":
 	    destination = "normal_" + os.path.basename(fichier)
@@ -59,18 +59,18 @@ def normalize_line(line):
 	line_number_r,line_number_w = make_regexp_linenumber_hyphen()
 	line = re.sub(line_number_r,line_number_w,line) 	# change of line number
 
-	
+
 	# are we at the begining of a new paragraph
 	if re.match(config.par_break_r,line):
 		paragraph = True
 	else:
 		paragraph = False
-	
+
 	# for stanza
 	global stanza
 	stanza_start = False
 	stanza_end = False
-	
+
 	if re.match(config.before_stanza_r,line):
 		if stanza == False:
 			stanza = True
@@ -78,43 +78,43 @@ def normalize_line(line):
 		else:
 			stanza = False
 			stanza_end = True
-		
-	
+
+
 	line = line.strip()			# suppression des espaces de début et fin
 	# hyphenation
 	try:
-		if line[-1] in config.hyphen:	
+		if line[-1] in config.hyphen:
 			line = line[:-1] + "%"
 	except:
 		pass
 
-	
+
 	# les guillemets
 	line = re.sub(config.ellipsis,r"\1'",line) # replace ’ in Ellipsis with ', otherwise not discernable from single endquote
 	line = re.sub(config.begin_quote_r,config.begin_quote_w,line)
 	line = re.sub(config.end_quote_r,config.end_quote_w,line)
-	line = re.sub("\'",config.ellipsis_back,line) # replace ’ back	
-	
+	line = re.sub("\'",config.ellipsis_back,line) # replace ’ back
+
 	#tiret
 	line = re.sub(config.ndash_r,config.ndash_w,line)
-	
+
 	#insert
 	line = re.sub(config.begin_insert_r,config.begin_insert_w,line)
 	line = re.sub(config.end_insert_r,config.end_insert_w,line)
-	
+
 	# chapters and paragraphs
 	line = re.sub(config.paragraph_r,config.paragraph_w,line) # paragraph number
-	line = re.sub(config.chapter_r,config.chapter_w,line) #chapter number  
-	
+	line = re.sub(config.chapter_r,config.chapter_w,line) #chapter number
+
 	# paragraph begining:
 	if paragraph:
 		line = config.par_break_w + line
-	
+
 	# last series of regexp
 	if config.last_regexp:
 		for regexp in config.last_regexp:
 		    line = re.sub(regexp[0],regexp[1],line)
-	
+
 	# stanza
 	if stanza_end:
 		line = config.after_stanza_w
@@ -122,7 +122,7 @@ def normalize_line(line):
 		line = config.before_stanza_w
 	elif stanza :
 		line = line + config.between_stanza_w
-	
+
 	# Unicode normalization
 	if config.unicode_normalize:
 	    line = unicodedata.normalize(config.unicode_normalize,line)
@@ -136,10 +136,10 @@ def test():
 		if file[0] in ["0","1","2","3","4","5","6","7","8","9"]: #If it's a file to be tested.
 		    md5 = hashlib.md5(open("test" + os.sep + "normal_" + file,"rb").read()).hexdigest()
 		    normaliser_fichier("test" + os.sep + file)
-		    
+
 		    if md5 !=hashlib.md5(open("test" + os.sep + "normal_" + file,"rb").read()).hexdigest():
 			    print ("Error on file" + file)
-			    
+
 		    else:
 			    print ("File "+file+ " OK")
 
@@ -158,6 +158,6 @@ def __main__():
 			except Exception as e:
 			    print ("Can't normalize "+ fichier + " "+ str(e))
 		sys.exit()
-	
+
 
 __main__()
